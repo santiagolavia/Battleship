@@ -26,6 +26,10 @@ def create_board(rows, cols):
             row.append('.')         
         board.append(row)
 
+    for i in ship_position:
+        for x in i:
+            board[x[0]][x[1]] = '#'
+
     #board header left
     for row in range(len(board)):
         print(abc[row], end = ")  ")
@@ -39,7 +43,7 @@ def create_board(rows, cols):
         print(str(row), end = "  ")
     print("")
 
-create_board(rows, cols)
+
 
 #print(board)
 
@@ -118,11 +122,54 @@ def randomly_ships_position(rows, cols):
     # print(test)
    
 
+
     #Test of the position
     print(ships_placed)
     print(ship_position)
 
+#location del ship
+def place_ship():
+
+    global board
+    global ship_position
+
+    for i in ship_position:
+        for x in i:
+            board[x[0]][x[1]] = '#'
+    
+    print(board)
+
+# Determinar los indices en el tablero 
+def  index_config(rows, cols):
+
+    global board
+    global ship_position
+    global abc
+
+    input_coord = input().upper()
+    index_letter = []
+    for letter in abc[0:rows]:
+       index_letter.append(letter)
+    print(index_letter)
+
+    index_board = []
+
+    if input_coord[0] in index_letter:
+        index_board = [index_letter.index(input_coord[0]), int(input_coord[1])]
+    else:
+        print('Write one possible coordinate')
+        
+    
+    print(index_board)
+    
+    for x in ship_position:
+        for y in x:
+            if index_board in x:
+                print('Shoot it')
 
 randomly_ships_position(rows,cols)
+create_board(rows, cols)
+place_ship()
+index_config(rows, cols)
 
 
