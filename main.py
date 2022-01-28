@@ -10,6 +10,7 @@ ships = 6
 ship_position = [[]]
 ships_sunk = 0
 abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+index_board = []
 
 
 #Use dots to determine the grid position
@@ -29,6 +30,13 @@ def create_board(rows, cols):
     for i in ship_position:
         for x in i:
             board[x[0]][x[1]] = '#'
+
+def print_board():
+
+    global board
+    global ship_position
+
+ 
 
     #board header left
     for row in range(len(board)):
@@ -137,7 +145,7 @@ def place_ship():
         for x in i:
             board[x[0]][x[1]] = '#'
     
-    print(board)
+    #print(board)
 
 # Determinar los indices en el tablero 
 def  index_config(rows, cols):
@@ -145,31 +153,52 @@ def  index_config(rows, cols):
     global board
     global ship_position
     global abc
+    global index_board
 
-    input_coord = input().upper()
+    #create an array with the letters to locate its index
+    input_coord =  input('write a coordinate:  ').upper()
     index_letter = []
     for letter in abc[0:rows]:
        index_letter.append(letter)
-    print(index_letter)
+    #print(index_letter)
 
     index_board = []
-
+    #check the input and convert the letter coordinate to a number
     if input_coord[0] in index_letter:
         index_board = [index_letter.index(input_coord[0]), int(input_coord[1])]
     else:
         print('Write one possible coordinate')
         
     
-    print(index_board)
     
+
+def shooting():
+
+    global ships_sunk
+    global board
+
+
+    #check if it reach an element of ship_position
     for x in ship_position:
         for y in x:
             if index_board in x:
-                print('Shoot it')
+                board[index_board[0]][index_board[1]] = 'O'
+            #print(board)
+                print('\n'*5 + 'Shoot it !!'.upper() + '\n')
+            break
 
+game = True
 randomly_ships_position(rows,cols)
 create_board(rows, cols)
-place_ship()
-index_config(rows, cols)
+
+while ammo > 0:
+    ammo -= 1
+    print_board()
+    #place_ship()
+    index_config(rows, cols)
+    shooting()
+
+
+
 
 
