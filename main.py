@@ -11,6 +11,8 @@ ship_position = [[]]
 ships_sunk = 0
 abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 index_board = []
+position_shot = []
+
 
 
 #Use dots to determine the grid position
@@ -31,6 +33,8 @@ def create_board(rows, cols):
         for x in i:
             board[x[0]][x[1]] = '#'
 
+
+#Diferentiate the create from the print
 def print_board():
 
     global board
@@ -125,14 +129,9 @@ def randomly_ships_position(rows, cols):
                     ships_placed +=1
             else: 
                 ship_2 -= 0
-    # test = []
-    # test.append([x+y for (x,y) in zip([1,0], [1,0])])
-    # print(test)
-   
-
 
     #Test of the position
-    print(ships_placed)
+    #print(ships_placed)
     print(ship_position)
 
 #location del ship
@@ -144,8 +143,6 @@ def place_ship():
     for i in ship_position:
         for x in i:
             board[x[0]][x[1]] = '#'
-    
-    #print(board)
 
 # Determinar los indices en el tablero 
 def  index_config(rows, cols):
@@ -163,22 +160,22 @@ def  index_config(rows, cols):
     #print(index_letter)
 
     index_board = []
+    
+
     #check the input and convert the letter coordinate to a number
     if input_coord[0] in index_letter:
         index_board = [index_letter.index(input_coord[0]), int(input_coord[1])]
     else:
         print('Write one possible coordinate')
-        
-    
-    
+ 
 
 def shooting():
 
     global ships_sunk
     global board
+    
 
-
-    #check if it reach an element of ship_position
+    #check if it reach an element of ship_position and change it to "0"
     for x in ship_position:
         for y in x:
             if index_board in x:
@@ -187,16 +184,30 @@ def shooting():
                 print('\n'*5 + 'Shoot it !!'.upper() + '\n')
             break
 
+    for x in ship_position:
+        print(x)
+        for y in x:
+            if y in position_shot:
+                board[y[0]][y[1]] = 'X'
+                print('SHIP SUNK !!')
+        
+    print(position_shot)
+
+
+#Game action
 game = True
 randomly_ships_position(rows,cols)
 create_board(rows, cols)
 
 while ammo > 0:
     ammo -= 1
+    position_shot.append(index_board)
     print_board()
     #place_ship()
     index_config(rows, cols)
     shooting()
+    print(' Your ammo remaining is: ' + str(ammo))
+    
 
 
 
