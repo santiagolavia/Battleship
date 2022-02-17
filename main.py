@@ -110,7 +110,8 @@ def is_ship_sunk(ship):
 def shooting():
     global ships_sunk
 
-    print(ship_position)
+    #testing
+    #print(ship_position)
 
     #check if it reach an element of ship_position and change it to "0"
     for ship in ship_position:
