@@ -1,12 +1,13 @@
+from audioop import add
 import random
 
 #First define the variables that determine the board and the instruments of the game
 #Global
-board = [[]]
+
+board = []
 rows = 10
 cols = 8
 ammo = 50
-ships = 6
 ship_position = [[]]
 ships_sunk = 0
 abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -18,30 +19,20 @@ position_shot = []
 #Use dots to determine the grid position
 def create_board(rows, cols):
 
-    global board
-    global abc
-
-    board = []
-    #board
     for x in range(rows):
         row = []
         for y in range(cols):
             row.append('.')         
         board.append(row)
 
-    for i in ship_position:
-        for x in i:
-            board[x[0]][x[1]] = '#'
+    #Testing ships positions
+    # for position in ship_position:
+    #     for coord in position:
+    #         board[coord[0]][coord[1]] = '#'
 
 
 #Diferentiate the create from the print
 def print_board():
-
-    global board
-    global ship_position
-
- 
-
     #board header left
     for row in range(len(board)):
         print(abc[row], end = ")  ")
@@ -56,100 +47,42 @@ def print_board():
     print("")
 
 
-
-#print(board)
+def shipDirection(max, min, ship_length):
+    direction = ["up", "left"]
+    random_direction = random.choice(direction)
+    random_position = [random.randint(0,max), random.randint(min,cols - 1)]
+    shipPosition = []
+    for ship in range(ship_length):
+        if random_direction == "up":
+            shipPosition.append((random_position[0] + ship, random_position[1]))
+        elif random_direction == "left":
+            shipPosition.append((random_position[0], random_position[1] - ship))
+    return shipPosition
 
 def randomly_ships_position(rows, cols):
 
-    global board
-    global ships
     global ship_position
 
-    ships_placed = 0
-    ship_2 = 3
-    ship_3 = 2
-    ship_4 = 1
+    ships = [4, 3, 3, 2, 2, 2]
 
-    ship_position = [[],[],[],[],[],[]]
-    ship_direction = ["up", "left"]
+    ship_position = []
+
+    for ship in ships:
+        ship_position.append(shipDirection(rows - ship - 1, ship - 1, ship))
+
+def validations(rows, cols):
+    global ammo
+
+#validate if the coord was already passed or if it is out of range
+    if index_board in position_shot or index_board[0] > (rows - 1) or index_board[1] > (cols - 1):
+        ammo += 1
+        print("Try a diferent move")
     
-    #hasta llegar a los 6, ejecutar
-    while ships_placed != ships:
-        while ship_4 > 0:
-            #la idea es agarrar una posicion inicial y dirección y crear el array de posiciones basado en longitud de ships
-            random_position = [random.randint(0,rows - 4), random.randint(3,cols - 1)]
-            random_direction = random.choice(ship_direction)
-            if not random_position in ship_position: 
-                if random_direction == 'up':
-                    ship_position[ships_placed].append(random_position)
-                    ship_position[ships_placed].append(list(x + y for (x, y) in zip(random_position, [1,0])))
-                    ship_position[ships_placed].append(list(x + y for (x, y) in zip(random_position, [2,0])))
-                    ship_position[ships_placed].append(list(x + y for (x, y) in zip(random_position, [3,0])))
-                    ship_4 -= 1
-                elif random_direction == 'left':
-                    ship_position[ships_placed].append(random_position)
-                    ship_position[ships_placed].append(list(x - y for (x, y) in zip(random_position, [0,1])))
-                    ship_position[ships_placed].append(list(x - y for (x, y) in zip(random_position, [0,2])))
-                    ship_position[ships_placed].append(list(x - y for (x, y) in zip(random_position, [0,3])))
-                    ship_4 -= 1
-            else: 
-                ship_4 -= 0
-        ships_placed += 1
-        while ship_3 > 0:
-            random_position = [random.randint(0,rows - 3), random.randint(2,cols - 1)]
-            random_direction = random.choice(ship_direction)
-            if not random_position in ship_position: 
-                if random_direction == 'up':
-                    ship_position[ships_placed].append(random_position)
-                    ship_position[ships_placed].append(list(x + y for (x, y) in zip(random_position, [1,0])))
-                    ship_position[ships_placed].append(list(x + y for (x, y) in zip(random_position, [2,0])))
-                    ship_3 -= 1
-                    ships_placed += 1
-                elif random_direction == 'left':
-                    ship_position[ships_placed].append(random_position)
-                    ship_position[ships_placed].append(list(x - y for (x, y) in zip(random_position, [0,1])))
-                    ship_position[ships_placed].append(list(x - y for (x, y) in zip(random_position, [0,2])))
-                    ship_3 -= 1
-                    ships_placed += 1
-            else: 
-                ship_3 -= 0        
-        while ship_2 > 0:
-            random_position = [random.randint(0,rows - 2), random.randint(1,cols - 1)]
-            random_direction = random.choice(ship_direction)
-            if not random_position in ship_position:
-                if random_direction == 'up':
-                    ship_position[ships_placed].append(random_position)
-                    ship_position[ships_placed].append(list(x + y for (x, y) in zip(random_position, [1,0])))
-                    ship_2 -= 1
-                    ships_placed +=1
-                elif random_direction == 'left':
-                    ship_position[ships_placed].append(random_position)
-                    ship_position[ships_placed].append(list(x - y for (x, y) in zip(random_position, [0,1])))
-                    ship_2 -= 1
-                    ships_placed +=1
-            else: 
-                ship_2 -= 0
 
-    #Test of the position
-    #print(ships_placed)
-    print(ship_position)
 
-#location del ship
-def place_ship():
-
-    global board
-    global ship_position
-
-    for i in ship_position:
-        for x in i:
-            board[x[0]][x[1]] = '#'
-
-# Determinar los indices en el tablero 
+# determine board indexes
 def  index_config(rows, cols):
-
-    global board
-    global ship_position
-    global abc
+#no puedo sacarla tampoco
     global index_board
 
     #create an array with the letters to locate its index
@@ -157,59 +90,60 @@ def  index_config(rows, cols):
     index_letter = []
     for letter in abc[0:rows]:
        index_letter.append(letter)
-    #print(index_letter)
-
-    index_board = []
     
-
     #check the input and convert the letter coordinate to a number
     if input_coord[0] in index_letter:
-        index_board = [index_letter.index(input_coord[0]), int(input_coord[1])]
+        index_board = index_letter.index(input_coord[0]), int(input_coord[1])
     else:
         print('Write one possible coordinate')
+    
+    validations(rows, cols)
+    
+    position_shot.append(index_board)
  
+def is_ship_sunk(ship):
+    for ship_part in ship:
+        if not ship_part in position_shot:
+            return False
+    return True
 
 def shooting():
-
     global ships_sunk
-    global board
-    
+
+    print(ship_position)
 
     #check if it reach an element of ship_position and change it to "0"
-    for x in ship_position:
-        for y in x:
-            if index_board in x:
-                board[index_board[0]][index_board[1]] = 'O'
-            #print(board)
-                print('\n'*5 + 'Shoot it !!'.upper() + '\n')
-            break
-
-    for x in ship_position:
-        print(x)
-        for y in x:
-            if y in position_shot:
-                board[y[0]][y[1]] = 'X'
-                print('SHIP SUNK !!')
+    for ship in ship_position:
+        if index_board in ship:
+            board[index_board[0]][index_board[1]] = 'O'
+            print('\n'*5 + 'Shoot it !!'.upper() + '\n')
         
-    print(position_shot)
+    # mark with a X the ship sunk
+            if is_ship_sunk(ship):
+                for ship_part in ship:
+                    board[ship_part[0]][ship_part[1]] = "X"
+                ships_sunk += 1
+                print("Ship SUNK!!" + '\n'*2 + str(6 - ships_sunk) + " ships remained")
+            break
 
 
 #Game action
 game = True
 randomly_ships_position(rows,cols)
 create_board(rows, cols)
-
-while ammo > 0:
+print('\n' + 
+"Instructions:" + '\n' + 
+"1) ALWAYS WRITE A COORDINATE BEAFORE PRESSING ENTER" + '\n'
+"2) CHOOSE A COORDINATE OF THE BOARD AND PRESS ENTER" '\n' +
+"3) YOU WILL WIN WHEN ALL THE SHIPS ARE DOWN" + '\n' + 
+"4) GOOD LUCK!" + '\n')
+while ammo > 0 and ships_sunk < 6:
     ammo -= 1
-    position_shot.append(index_board)
     print_board()
-    #place_ship()
     index_config(rows, cols)
     shooting()
+
     print(' Your ammo remaining is: ' + str(ammo))
+
+print("FINISHED" + '\n'*5 + "YOU WON !!!!!" + '\n' * 5 + "CONGRATULATIONS !!!!" + '\n'*5)
     
-
-
-
-
-
